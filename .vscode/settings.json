@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "ltd_driver_0x87.h": "c"
+    },
+    "python.testing.pytestArgs": [
+        "test"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
