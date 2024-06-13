@@ -5,7 +5,8 @@
 static MsgTypeConfig config_hash_map[MAX_MSG_TYPES];
 
 MsgTypeConfig get_msg_type_config(uint8_t config_idx) {
-  assert(config_idx < MAX_MSG_TYPES);
+  if (config_idx >= MAX_MSG_TYPES)
+    return (MsgTypeConfig){.msg_type = 0, .data_type = 0, .size_bytes = 0};
   return config_hash_map[config_idx];
 }
 

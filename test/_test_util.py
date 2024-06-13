@@ -5,6 +5,7 @@ from unix_ffi import (
     create_ltd_driver_0x87_ffi
 )
 
+DEFAULT_MSG_TYPE_CONFIG = MsgTypeConfig(msg_type=0, data_type=0, size_bytes=0)
 MsgTypeConfigArr = MsgTypeConfig * FFIDefines.LT_CH000_DRIVER_CONFIG_SIZE
 lt_ch000_driver_config = MsgTypeConfigArr(
     MsgTypeConfig(msg_type=FFIDefines.WRITE_PISTON_PUMP_MSG_TYPE, data_type=FFIDefines.DATA_TYPE_UINT, size_bytes=4),
