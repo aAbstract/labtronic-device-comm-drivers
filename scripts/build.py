@@ -2,7 +2,7 @@ import os
 import sys
 
 CC = 'gcc'
-CFLAGS = ['-lm']
+CFLAGS = ['-lm', '-Wstringop-overflow=0']
 ACTIONS = ['elf_rls', 'elf_dbg', 'driver_so']
 
 

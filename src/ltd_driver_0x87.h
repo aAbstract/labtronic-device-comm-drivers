@@ -18,7 +18,7 @@
 #define RC_ERR_UNK_MSG_TYPE 1
 #define RC_ERR_PKT_TOO_SMALL 2
 #define RC_ERR_INV_CRC16 3
-#define RC_ERR_INV_VERSION 4
+#define RC_ERR_INV_PV 4
 #define RC_ERR_INV_PKT_LEN 5
 
 #define DATA_TYPE_INT 0

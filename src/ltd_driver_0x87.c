@@ -105,7 +105,7 @@ uint8_t encode_packet(uint16_t msg_seq_number, uint8_t msg_type, const uint8_t* 
 uint8_t decode_packet(const uint8_t* packet, DeviceMsg* out_device_msg) {
   // check PROTOCOL_VERSION
   if (packet[PKT_OFST_PV] != PROTOCOL_VERSION || packet[PKT_OFST_PV + 1] != PROTOCOL_VERSION)
-    return RC_ERR_INV_VERSION;
+    return RC_ERR_INV_PV;
 
   // check packet length
   uint8_t packet_len = packet[PKT_OFST_LEN];

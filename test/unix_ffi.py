@@ -5,7 +5,6 @@ from ctypes import (
     c_uint16,
     CDLL,
     POINTER,
-    c_void_p,
 )
 
 
@@ -26,6 +25,24 @@ class DeviceMsg(Structure):
 
 
 class FFIDefines:
+    PROTOCOL_VERSION = 0x87
+    PACKET_MIN_SIZE = 11
+    MAX_MSG_TYPES = 16
+
+    PKT_OFST_PV = 0
+    PKT_OFST_LEN = 2
+    PKT_OFST_SN = 3
+    PKT_OFST_CFG1 = 5
+    PKT_OFST_CFG2 = 6
+    PKT_OFST_DATA = 7
+
+    RC_OK = 0
+    RC_ERR_UNK_MSG_TYPE = 1
+    RC_ERR_PKT_TOO_SMALL = 2
+    RC_ERR_INV_CRC16 = 3
+    RC_ERR_INV_PV = 4
+    RC_ERR_INV_PKT_LEN = 5
+
     DATA_TYPE_INT = 0
     DATA_TYPE_UINT = 1
     DATA_TYPE_FLOAT = 2
@@ -59,7 +76,7 @@ def create_ltd_driver_0x87_ffi() -> CDLL | None:
     ltd_driver_0x87.encode_packet.argtypes = [
         c_uint16,  # msg_seq_number
         c_uint8,  # msg_type
-        c_void_p,  # msg_value_ptr
+        POINTER(c_uint8),  # msg_value_ptr
         POINTER(c_uint8),  # out_packet
     ]
     ltd_driver_0x87.encode_packet.restype = c_uint8
