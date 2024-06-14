@@ -62,8 +62,6 @@ float decoded_value = 0;
 printf("OK | msg_value: %0.3f\n", decoded_value); // OK | msg_value: 2.254
 ```
 
-## Run Unit Tests - TODO
-
 ## API Reference
 ```c
 typedef struct MsgTypeConfig {
@@ -82,3 +80,24 @@ uint8_t init_ltd_driver_0x87(const MsgTypeConfig* driver_config, uint8_t arr_siz
 uint8_t encode_packet(uint16_t msg_seq_number, uint8_t msg_type, const uint8_t* msg_value_ptr, uint8_t* out_packet);
 uint8_t decode_packet(const uint8_t* packet, DeviceMsg* out_device_msg);
 ```
+
+## Run Unit Tests - Unix
+Unit tests are implemented using **Python + PyTest**.  
+Python **ctypes** is also used as Foreign Function Interface (FFI) to the compiled ***.so** file.
+1. Build ***.so** lib
+```bash
+$ python scripts/build.py driver_so
+```
+2. Install pytest
+```bash
+$ pip install pytest
+```
+3. Run unit tests
+```bash
+$ pytest
+```
+
+## Run Unit Tests - Windows
+The current Foreign Function Interface (FFI) supports only Unix systems (Linux/MacOS).  
+To run unit tests on windows, a win32 compatible FFI is required.  
+**test/unix_ffi.py** can be used as a guide to implement the win32 port.
