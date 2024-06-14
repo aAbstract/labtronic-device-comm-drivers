@@ -5,11 +5,21 @@
 
 #define PROTOCOL_VERSION 0x87
 #define PACKET_MIN_SIZE 11
-#define PACKET_DATA_START 7
 #define MAX_MSG_TYPES 16 // 4 msg_type bits
 
-#define OK_RC 0
-#define ERR_UNK_MSG_TYPE 1
+#define PKT_OFST_PV 0
+#define PKT_OFST_LEN 2
+#define PKT_OFST_SN 3
+#define PKT_OFST_CFG1 5
+#define PKT_OFST_CFG2 6
+#define PKT_OFST_DATA 7
+
+#define RC_OK 0
+#define RC_ERR_UNK_MSG_TYPE 1
+#define RC_ERR_PKT_TOO_SMALL 2
+#define RC_ERR_INV_CRC16 3
+#define RC_ERR_INV_VERSION 4
+#define RC_ERR_INV_PKT_LEN 5
 
 #define DATA_TYPE_INT 0
 #define DATA_TYPE_UINT 1

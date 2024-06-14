@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <math.h>
 
 #include "ltd_driver_0x87.h"
@@ -68,43 +67,77 @@ uint8_t init_ltd_driver_0x87(const MsgTypeConfig* driver_config, uint8_t arr_siz
     MsgTypeConfig _config = driver_config[i];
     config_hash_map[_config.msg_type] = _config;
   }
-  return OK_RC;
+  return RC_OK;
 }
 
 uint8_t encode_packet(uint16_t msg_seq_number, uint8_t msg_type, const uint8_t* msg_value_ptr, uint8_t* out_packet) {
   // check if the msg_type exists in the config_hash_map
-  if (msg_type >= MAX_MSG_TYPES)
-    return ERR_UNK_MSG_TYPE;
   MsgTypeConfig _config = get_msg_type_config(msg_type);
   if (_config.size_bytes == 0)
-    return ERR_UNK_MSG_TYPE;
+    return RC_ERR_UNK_MSG_TYPE;
 
   // load start segment
   uint8_t* msg_seq_number_ptr = (uint8_t*)&msg_seq_number;
   uint8_t cfg1_byte = gen_cfg1(&_config);
-  out_packet[0] = PROTOCOL_VERSION;
-  out_packet[1] = PROTOCOL_VERSION;
-  out_packet[2] = PACKET_MIN_SIZE + _config.size_bytes;
-  out_packet[3] = msg_seq_number_ptr[0];
-  out_packet[4] = msg_seq_number_ptr[1];
-  out_packet[5] = cfg1_byte;
-  out_packet[6] = 0; // cfg2_byte (unused)
+  out_packet[PKT_OFST_PV] = PROTOCOL_VERSION;
+  out_packet[PKT_OFST_PV + 1] = PROTOCOL_VERSION;
+  out_packet[PKT_OFST_LEN] = PACKET_MIN_SIZE + _config.size_bytes;
+  out_packet[PKT_OFST_SN] = msg_seq_number_ptr[0];
+  out_packet[PKT_OFST_SN + 1] = msg_seq_number_ptr[1];
+  out_packet[PKT_OFST_CFG1] = cfg1_byte;
+  out_packet[PKT_OFST_CFG2] = 0; // cfg2_byte (unused)
 
   // load data segment
   for (uint8_t i = 0; i < _config.size_bytes; i++)
-    out_packet[PACKET_DATA_START + i] = msg_value_ptr[i];
+    out_packet[PKT_OFST_DATA + i] = msg_value_ptr[i];
 
   // load end segment
-  uint16_t crc16 = compute_crc16(out_packet, PACKET_DATA_START + _config.size_bytes);
+  uint16_t crc16 = compute_crc16(out_packet, PKT_OFST_DATA + _config.size_bytes);
   uint8_t* crc16_ptr = (uint8_t*)&crc16;
-  out_packet[PACKET_DATA_START + _config.size_bytes] = crc16_ptr[0];
-  out_packet[PACKET_DATA_START + _config.size_bytes + 1] = crc16_ptr[1];
-  out_packet[PACKET_DATA_START + _config.size_bytes + 2] = 0x0D;
-  out_packet[PACKET_DATA_START + _config.size_bytes + 3] = 0x0A;
+  out_packet[PKT_OFST_DATA + _config.size_bytes] = crc16_ptr[0];
+  out_packet[PKT_OFST_DATA + _config.size_bytes + 1] = crc16_ptr[1];
+  out_packet[PKT_OFST_DATA + _config.size_bytes + 2] = 0x0D;
+  out_packet[PKT_OFST_DATA + _config.size_bytes + 3] = 0x0A;
 
-  return OK_RC;
+  return RC_OK;
 }
 
 uint8_t decode_packet(const uint8_t* packet, DeviceMsg* out_device_msg) {
-  return OK_RC;
+  // check PROTOCOL_VERSION
+  if (packet[PKT_OFST_PV] != PROTOCOL_VERSION || packet[PKT_OFST_PV + 1] != PROTOCOL_VERSION)
+    return RC_ERR_INV_VERSION;
+
+  // check packet length
+  uint8_t packet_len = packet[PKT_OFST_LEN];
+  if (packet[packet_len - 2] != 0x0D || packet[packet_len - 1] != 0x0A)
+    return RC_ERR_INV_PKT_LEN;
+
+  // check msg_type
+  uint8_t cfg1_byte = packet[PKT_OFST_CFG1];
+  uint8_t msg_type = cfg1_byte & 0x0F;
+  MsgTypeConfig _config = get_msg_type_config(msg_type);
+  if (_config.size_bytes == 0)
+    return RC_ERR_UNK_MSG_TYPE;
+
+  // check crc16
+  uint16_t packet_crc16 = 0xFFFF;
+  ((uint8_t*)&packet_crc16)[0] = packet[PKT_OFST_DATA + _config.size_bytes];
+  ((uint8_t*)&packet_crc16)[1] = packet[PKT_OFST_DATA + _config.size_bytes + 1];
+  uint16_t target_crc16 = compute_crc16(packet, PKT_OFST_DATA + _config.size_bytes);
+  if (packet_crc16 != target_crc16)
+    return RC_ERR_INV_CRC16;
+
+  // construct device_msg object
+  // load config
+  out_device_msg->config = _config;
+  // load seq_number
+  uint16_t packet_seq_number = 0xFFFF;
+  ((uint8_t*)&packet_seq_number)[0] = packet[PKT_OFST_SN];
+  ((uint8_t*)&packet_seq_number)[1] = packet[PKT_OFST_SN + 1];
+  out_device_msg->seq_number = packet_seq_number;
+  // load data
+  for (uint8_t i = 0; i < _config.size_bytes; i++)
+    out_device_msg->msg_value_buffer[i] = packet[PKT_OFST_DATA + i];
+
+  return RC_OK;
 }

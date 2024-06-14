@@ -1,6 +1,13 @@
 {
     "files.associations": {
-        "ltd_driver_0x87.h": "c"
+        "ltd_driver_0x87.h": "c",
+        "array": "c",
+        "memory": "c",
+        "functional": "c",
+        "tuple": "c",
+        "utility": "c",
+        "lt_ch000.h": "c",
+        "stdint.h": "c"
     },
     "python.testing.pytestArgs": [
         "test"
