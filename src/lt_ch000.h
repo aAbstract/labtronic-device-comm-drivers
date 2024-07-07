@@ -1,7 +1,7 @@
 #ifndef LT_CH000_H
 #define LT_CH000_H
 
-#include "ltd_driver_0x87.h"
+#include "ltd_driver.h"
 
 #define LT_CH000_DRIVER_CONFIG_SIZE 9
 

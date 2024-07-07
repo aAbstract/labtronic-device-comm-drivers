@@ -1,6 +1,6 @@
 {
     "files.associations": {
-        "ltd_driver_0x87.h": "c",
+        "ltd_driver.h": "c",
         "array": "c",
         "memory": "c",
         "functional": "c",

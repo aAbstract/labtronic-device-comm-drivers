@@ -3,7 +3,7 @@
 ## Usage
 1. Create driver config list
 ```c
-#include "ltd_driver_0x87.h"
+#include "ltd_driver.h"
 
 MsgTypeConfig driver_config[5] = {
     {
@@ -36,7 +36,7 @@ MsgTypeConfig driver_config[5] = {
 
 2. Initialize driver using driver config list
 ```c
-uint8_t init_driver_rc = init_ltd_driver_0x87(driver_config, 5);
+uint8_t init_driver_rc = init_ltd_driver(0x8787, driver_config, 5);
 ```
 
 3. Encoding a packet
@@ -76,7 +76,7 @@ typedef struct DeviceMsg {
   uint8_t msg_value_buffer[8];
 } DeviceMsg;
 
-uint8_t init_ltd_driver_0x87(const MsgTypeConfig* driver_config, uint8_t arr_size);
+uint8_t init_ltd_driver(uint16_t _protocol_version, const MsgTypeConfig* driver_config, uint8_t arr_size);
 uint8_t encode_packet(uint16_t msg_seq_number, uint8_t msg_type, const uint8_t* msg_value_ptr, uint8_t* out_packet);
 uint8_t decode_packet(const uint8_t* packet, DeviceMsg* out_device_msg);
 ```

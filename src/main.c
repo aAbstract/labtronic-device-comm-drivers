@@ -1,12 +1,12 @@
 #include <stdio.h>
 
 #include "lt_ch000.h"
-#include "ltd_driver_0x87.h"
+#include "ltd_driver.h"
 
 MsgTypeConfig get_msg_type_config(uint8_t config_idx);
 
 int main() {
-  uint8_t init_driver_rc = init_ltd_driver_0x87(lt_ch000_driver_config, LT_CH000_DRIVER_CONFIG_SIZE);
+  uint8_t init_driver_rc = init_ltd_driver(0x8787, lt_ch000_driver_config, LT_CH000_DRIVER_CONFIG_SIZE);
   MsgTypeConfig _config = get_msg_type_config(WRITE_WEIGHT_MSG_TYPE);
 
   // encode_packet

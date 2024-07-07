@@ -1,7 +1,8 @@
 #include <math.h>
 
-#include "ltd_driver_0x87.h"
+#include "ltd_driver.h"
 
+static uint16_t protocol_version = 0;
 static MsgTypeConfig config_hash_map[MAX_MSG_TYPES];
 
 // clang-format off
@@ -62,7 +63,8 @@ MsgTypeConfig get_msg_type_config(uint8_t config_idx) {
   return config_hash_map[config_idx];
 }
 
-uint8_t init_ltd_driver_0x87(const MsgTypeConfig* driver_config, uint8_t arr_size) {
+uint8_t init_ltd_driver(uint16_t _protocol_version, const MsgTypeConfig* driver_config, uint8_t arr_size) {
+  protocol_version = _protocol_version;
   for (uint8_t i = 0; i < arr_size; i++) {
     MsgTypeConfig _config = driver_config[i];
     config_hash_map[_config.msg_type] = _config;
@@ -79,8 +81,8 @@ uint8_t encode_packet(uint16_t msg_seq_number, uint8_t msg_type, const uint8_t* 
   // load start segment
   uint8_t* msg_seq_number_ptr = (uint8_t*)&msg_seq_number;
   uint8_t cfg1_byte = gen_cfg1(&_config);
-  out_packet[PKT_OFST_PV] = PROTOCOL_VERSION;
-  out_packet[PKT_OFST_PV + 1] = PROTOCOL_VERSION;
+  out_packet[PKT_OFST_PV] = ((uint8_t*)&protocol_version)[0];
+  out_packet[PKT_OFST_PV + 1] = ((uint8_t*)&protocol_version)[1];
   out_packet[PKT_OFST_LEN] = PACKET_MIN_SIZE + _config.size_bytes;
   out_packet[PKT_OFST_SN] = msg_seq_number_ptr[0];
   out_packet[PKT_OFST_SN + 1] = msg_seq_number_ptr[1];
@@ -104,7 +106,7 @@ uint8_t encode_packet(uint16_t msg_seq_number, uint8_t msg_type, const uint8_t* 
 
 uint8_t decode_packet(const uint8_t* packet, DeviceMsg* out_device_msg) {
   // check PROTOCOL_VERSION
-  if (packet[PKT_OFST_PV] != PROTOCOL_VERSION || packet[PKT_OFST_PV + 1] != PROTOCOL_VERSION)
+  if (packet[PKT_OFST_PV] != ((uint8_t*)&protocol_version)[0] || packet[PKT_OFST_PV + 1] != ((uint8_t*)&protocol_version)[1])
     return RC_ERR_INV_PV;
 
   // check packet length

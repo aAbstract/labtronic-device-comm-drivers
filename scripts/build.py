@@ -31,7 +31,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     if action == 'driver_so':
-        lib_name = 'ltd_driver_0x87'
+        lib_name = 'ltd_driver'
         out_dir = f'build/{lib_name}.so'
         os.system(f"{CC} src/{lib_name}.c {' '.join(CFLAGS)} -fPIC -shared -O3 -o {out_dir}")
         print(f"Output file: {out_dir}")
