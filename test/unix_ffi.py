@@ -13,6 +13,7 @@ class MsgTypeConfig(Structure):
         ('msg_type', c_uint8),
         ('data_type', c_uint8),
         ('size_bytes', c_uint8),
+        ('cfg2', c_uint8),
     ]
 
 

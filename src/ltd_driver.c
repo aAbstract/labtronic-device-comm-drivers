@@ -87,7 +87,7 @@ uint8_t encode_packet(uint16_t msg_seq_number, uint8_t msg_type, const uint8_t* 
   out_packet[PKT_OFST_SN] = msg_seq_number_ptr[0];
   out_packet[PKT_OFST_SN + 1] = msg_seq_number_ptr[1];
   out_packet[PKT_OFST_CFG1] = cfg1_byte;
-  out_packet[PKT_OFST_CFG2] = 0; // cfg2_byte (unused)
+  out_packet[PKT_OFST_CFG2] = _config.cfg2;
 
   // load data segment
   for (uint8_t i = 0; i < _config.size_bytes; i++)

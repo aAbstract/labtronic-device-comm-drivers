@@ -29,6 +29,7 @@ typedef struct MsgTypeConfig {
   uint8_t msg_type;
   uint8_t data_type;
   uint8_t size_bytes;
+  uint8_t cfg2;
 } MsgTypeConfig;
 
 typedef struct DeviceMsg {

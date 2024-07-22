@@ -26,7 +26,8 @@ int main() {
 
   if (device_msg.config.msg_type != _config.msg_type ||
       device_msg.config.data_type != _config.data_type ||
-      device_msg.config.size_bytes != _config.size_bytes) {
+      device_msg.config.size_bytes != _config.size_bytes ||
+      device_msg.config.cfg2 != _config.cfg2) {
     printf("MsgTypeConfig mismatch\n");
     return 1;
   }
